@@ -1,0 +1,22 @@
+<div class="main-container">
+  <mat-toolbar color="primary">
+    <span>HOMER VIEW</span>
+  </mat-toolbar>
+  <div>
+    <app-detail-dialog
+      [titleId]="paramData.id"
+      [mouseEventData]="paramData.mouseEventData"
+      [sipDataItem]="paramData.data"
+      [isLoaded]="paramData.loaded"
+      [isData]="!!testdata && testdata.total > 0"
+      (openMessage)="addWindowMessage($event)"
+    ></app-detail-dialog>
+    <div>
+      <!-- MESSAGE DETAILS -->
+      <app-message-content class="message"
+        *ngIf="isMessage"
+        (close)="isMessage = false"
+        [data]="messageData"></app-message-content>
+    </div>
+  </div>
+</div>

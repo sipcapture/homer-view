@@ -1,0 +1,40 @@
+<div style="position: releative;">
+  <div *ngIf="!_isLoaded" class="loading">
+      <mat-spinner></mat-spinner>
+  </div>
+  <div *ngIf="_isLoaded && !_isData" class="no-data">
+    <h1>No Data!</h1>
+    <p></p>
+  </div>
+  <mat-tab-group *ngIf="_isLoaded && _isData" style="height: 100%;">
+    <mat-tab *ngIf="tabs.messages" label="Messages">
+      <app-tab-messages
+        [dataItem]="sipDataItem"
+        (messageWindow)="addWindow($event)"
+      ></app-tab-messages>
+    </mat-tab>
+    <mat-tab *ngIf="tabs.flow" label="Flow">
+      <app-tab-flow
+        [callid]="titleId"
+        [dataItem]="sipDataItem"
+        (messageWindow)="addWindow($event)"
+      ></app-tab-flow>
+    </mat-tab>
+    <mat-tab *ngIf="tabs.qos" label="QoS">
+      <app-tab-qos
+        [callid]="titleId"
+        [dataItem]="sipDataItem"
+        [id]="sipDataItem.data.messages[0].id"
+        (haveData)="onTabQos($event)"></app-tab-qos>
+    </mat-tab>
+    <mat-tab *ngIf="tabs.logs" label="Logs">
+      <app-tab-logs [data]="dataLogs"></app-tab-logs>
+    </mat-tab>
+    <!-- <mat-tab *ngIf="tabs" label="Loki">
+      <app-tab-loki [id]="titleId" ></app-tab-loki>
+    </mat-tab> -->
+    <mat-tab *ngIf="tabs.export" label="Export">
+      <app-tab-export [callid]="titleId" [id]="sipDataItem.data.messages[0].id"></app-tab-export>
+    </mat-tab>
+  </mat-tab-group>
+</div>

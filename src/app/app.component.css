@@ -1,0 +1,14 @@
+.main-container {
+    height: calc(100vh - 104px);;
+}
+.message {
+    position: fixed;
+    bottom: 0;
+    top: 50%;
+    left: 0;
+    right: 0;
+    margin: auto;
+    background-color: white;
+    z-index: 7;
+    box-shadow: 0px -2px 6px #000;
+}
