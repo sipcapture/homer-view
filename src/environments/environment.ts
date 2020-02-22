@@ -2,9 +2,16 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+// export const environment = {
+//   production: false,
+//   apiUrl: 'http://localhost/api/v3'
+// };
+import { VERSION } from '../VERSION';
+
 export const environment = {
   production: false,
-  apiUrl: 'http://de9.sipcapture.io/api/v3'
+  environment: VERSION,
+  apiUrl: window.location.protocol + '//' + (window.location.host) + '/api/v3'
 };
 
 /*

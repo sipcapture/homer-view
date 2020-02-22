@@ -3,8 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "start": "ng serve --port 80",
+    "dev": "ng serve --configuration=development --port=80",
+    "build": "ng build --prod && gzip -9 ./dist/homer-view/*.js",
+    "build-keep-js": "ng build --prod && gzip -9 -k ./dist/homer-view/*.js",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
