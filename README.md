@@ -11,7 +11,7 @@ Stand-Alone Angular Viewer for HOMER API 7.7
 
 ## Installation
 1. Clone this repository
-2. `cd homer-view-react`
+2. `cd homer-view`
 3. Run `npm install` to install dependencies
 4. Run `npm run build` to build application
 5. Start the development server `npm run start`
