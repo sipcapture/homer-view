@@ -7,14 +7,15 @@ Stand-Alone Angular Viewer for HOMER API 7.7
 
 
 ## Requirements
-* This Application requires a [HEP Auth Proxy](https://github.com/sipcapture/homer-view-react/tree/master/proxy) to access the HOMER API
+* This Application requires a Proxy like [HEP Auth Proxy](https://github.com/sipcapture/homer-view-react/tree/master/proxy) to access the HOMER API
 
 ## Installation
 1. Clone this repository
 2. `cd homer-view`
-3. Run `npm install` to install dependencies
-4. Run `npm run build` to build application
-5. Start the development server `npm run start`
+3. Run `npm install` to install dependencies.
+4. Run `npm install -g @angular/cli` to install or update Angular CLI.
+5. `npm run build` to build the Stand-Alone Angular Viewer.
+7. `ng serve` to serve the app.
 6. Access the application at http://localhost:4200/
 
 ## Manual Configuration *(not required for docker)*
