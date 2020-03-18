@@ -6,7 +6,7 @@ Stand-Alone Angular Viewer for HOMER API 7.7
 ![2020-03-18_16-53-40](https://user-images.githubusercontent.com/45398541/76975477-43d15280-693b-11ea-9f3e-e1d1d5c9ca4e.gif)
 
 ## Requirements
-* This Application requires a Proxy like [HEP Auth Proxy](/tree/master/proxy) to access the HOMER API.
+* This Application requires a Proxy like [HEP Auth Proxy](https://github.com/sipcapture/homer-view/tree/master/proxy) to access the HOMER API.
 
 ## 1 Install and configure the Proxy
 1. open the proxy config from `proxy/config.js`
