@@ -7,26 +7,35 @@ Stand-Alone Angular Viewer for HOMER API 7.7
 
 
 ## Requirements
-* This Application requires a Proxy like [HEP Auth Proxy](https://github.com/sipcapture/homer-view-react/tree/master/proxy) to access the HOMER API
+* This Application requires a Proxy like [HEP Auth Proxy](https://github.com/sipcapture/homer-view-react/tree/master/proxy) to access the HOMER API. In this repository is in the `./proxy` folder.
 
-## Installation
+## 1 Install and configure the Proxy
+1. open the proxy config from `proxy/config.js`
+2. configure the proxy settings with your HOMER API parameters *(API url, username and password)*
+4. start proxy: cd proxy; npm install && npm start
+
+## 2 Install and configure the view
 1. Clone this repository
 2. `cd homer-view`
 3. Run `npm install` to install dependencies.
 4. Run `npm install -g @angular/cli` to install or update Angular CLI.
-5. `npm run build` to build the Stand-Alone Angular Viewer.
+5. configure your environment with the correct `apiUrl`
+6. open the `src/app/app.component.ts` and configure an save your Api user and password in:
+```js
+...
+    ngOnInit() {
+        this.authenticationService.currentUser.subscribe(async (user) => {
+            if (!user) {
+                /* FOR TEST API */
+                await this.authenticationService.login('admin', 'siptest').pipe(first()).toPromise();
+                return;
+            }
+...
+```
+6. `npm run build` to build the Stand-Alone Angular Viewer.
 7. `ng serve` to serve the app.
-6. Access the application at http://localhost:4200/
+8. Access the application at http://localhost:4200/
 
-## Manual Configuration *(not required for docker)*
-1. copy the example file from `example/view-config.js` to `src/config/index.js`
-2. copy the example file from `example/proxy-config.js` to `proxy/config.js` 
-3. open `proxy/config.js` and configure your HOMER API parameters *(API url, username and password)*
-4. start proxy: cd proxy; npm install && npm start
-
-
-## Docker
-See the [example](https://github.com/sipcapture/homer-view/tree/master/example) folder for a working example
 
 ### URL Parameters
 The Application accepts the following URL parameters defining search settings:
