@@ -3,11 +3,10 @@
 # HOMER-View
 Stand-Alone Angular Viewer for HOMER API 7.7
 
-![ezgif com-optimize 24](https://user-images.githubusercontent.com/1423657/53689632-673e5500-3d5a-11e9-88d8-a9216f84bf19.gif)
-
+![2020-03-18_16-53-40](https://user-images.githubusercontent.com/45398541/76975477-43d15280-693b-11ea-9f3e-e1d1d5c9ca4e.gif)
 
 ## Requirements
-* This Application requires a Proxy like [HEP Auth Proxy](https://github.com/sipcapture/homer-view-react/tree/master/proxy) to access the HOMER API. In this repository is in the `./proxy` folder.
+* This Application requires a Proxy like [HEP Auth Proxy](https://github.com/sipcapture/homer-view/tree/master/proxy) to access the HOMER API.
 
 ## 1 Install and configure the Proxy
 1. open the proxy config from `proxy/config.js`
@@ -38,10 +37,15 @@ Stand-Alone Angular Viewer for HOMER API 7.7
 
 
 ### URL Parameters
-The Application accepts the following URL parameters defining search settings:
+The Application accepts the following URL parameters defining search settings 
+
+ **Required** 
+* `id`: id string or array
+* `callid`: callid string or array
 * `from`: start time in milliseconds
 * `to`: stop time in milliseconds
-* `callid`: callid string or array
+
+**Optional**
 * `tabs`: visibile tabs, options
   * messages
   * qos
@@ -50,7 +54,7 @@ The Application accepts the following URL parameters defining search settings:
   * export
 
 #### Example
-* `http://localhost:4200/?callid=3orfbk@127.0.0.1&from=1574632800000&to=1577224799000`
+* `http://localhost:4200/?id=16697926&callid=3orfbk@127.0.0.1&from=1574632800000&to=1577224799000`
 
 -------------
 
