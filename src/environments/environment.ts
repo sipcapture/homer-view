@@ -7,11 +7,10 @@
 //   apiUrl: 'http://localhost/api/v3'
 // };
 import { VERSION } from '../VERSION';
-
 export const environment = {
   production: false,
-  environment: VERSION,
-  apiUrl: window.location.protocol + '//' + (window.location.host) + '/api/v3'
+  environment: VERSION + '(dev)',
+  apiUrl: 'apiUrl: window.location.protocol + '//' + (window.location.host) + '/api/v3'
 };
 
 /*

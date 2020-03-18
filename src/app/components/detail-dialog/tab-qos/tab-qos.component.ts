@@ -504,8 +504,8 @@ export class TabQosComponent implements OnInit {
         };
         return {
             timestamp: {
-                from: getParams.from || 1574632800000,
-                to: getParams.to || 1577224799000
+                from: getParams.from *1 || 1574632800000,
+                to: getParams.to *1 || 1577224799000
             },
             param: {
                 search,

@@ -36,10 +36,10 @@ export class AppComponent implements OnInit {
         this.authenticationService.currentUser.subscribe(async (user) => {
             if (!user) {
                 /* FOR TEST API */
-                await this.authenticationService.login('admin', 'siptest').pipe(first()).toPromise();
+                await this.authenticationService.login('admin', 'sipcapture').pipe(first()).toPromise();
                 return;
             }
-            this.testdata = await this.getDataTransaction();
+         this.testdata = await this.getDataTransaction();
             this.paramData = {
                 id: this.getParams.callid || '',
                 mouseEventData: 'item.mouseEventData',
@@ -50,6 +50,7 @@ export class AppComponent implements OnInit {
             console.log('this.getParams', this.getParams);
 
             this.loading = true;
+           
         });
     }
     async getDataTransaction() {
@@ -69,7 +70,7 @@ export class AppComponent implements OnInit {
         }
         const search = {};
         search[localData.protocol_id] = {
-            id: this.getParams.id,
+            id: this.getParams.id*1,
             callid: callids,
             uuid: []
         };
@@ -80,7 +81,7 @@ export class AppComponent implements OnInit {
                     registration: localData.protocol_id === '1_registration',
                     rest: localData.protocol_id === '1_default'
                 },
-                limit: this.getParams.limit || 200,
+                limit: this.getParams.limit *1 || 200,
                 search,
                 location: {},
                 timezone: {
@@ -89,8 +90,8 @@ export class AppComponent implements OnInit {
                 }
             },
             timestamp: {
-                from: this.getParams.from || 1574632800000,
-                to: this.getParams.to || 1577224799000
+                from: this.getParams.from *1 || 1574632800000,
+                to: this.getParams.to *1 || 1577224799000
             }
         };
     }
@@ -149,13 +150,13 @@ export class AppComponent implements OnInit {
                 }
             },
             timestamp: {
-                from: this.getParams.from || 1574632800000,
-                to: this.getParams.to || 1577224799000
+                from: this.getParams.from *1 || 1574632800000,
+                to: this.getParams.to *1 || 1577224799000
             }
         };
 
         request.param.limit = 1;
-        request.param.search[localData.protocol_id] = { id: row.data.id };
+        request.param.search[localData.protocol_id] = { id: row.data.id *1};
         request.param.transaction = {
             call: localData.protocol_id === '1_call',
             registration: localData.protocol_id === '1_registration',
