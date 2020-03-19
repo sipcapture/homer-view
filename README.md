@@ -67,7 +67,7 @@ export const environment = {
   production: false,
   environment: VERSION + '(dev)',
   /* MY API URL */
-  apiUrl: 'http://my.api.host/api/v3'
+  apiUrl: 'http://my.server.host/api/v3'
 };
 
 ...
