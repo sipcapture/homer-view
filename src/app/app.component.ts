@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
     ngOnInit() {
         this.authenticationService.currentUser.subscribe(async (user) => {
             if (!user) {
-                /* FOR TEST API */
+                /* FOR TEST API  --> Here add your API user and password .logn('user', 'password') */
                 await this.authenticationService.login('admin', 'sipcapture').pipe(first()).toPromise();
                 return;
             }

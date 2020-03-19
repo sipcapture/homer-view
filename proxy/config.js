@@ -1,12 +1,24 @@
 var config = {
-        apiUrl: 'http://my.hepic.server/',
-        apiSess: 'http://my.hepic.server/api/v2/auth',
+
+        // the url of my api
+        apiUrl: 'http://my.api.host/api/v3/',
+
+        // the url of my api auth
+        apiSess: 'http://my.api.host/api/v3/auth',
+        
         apiAuthJWT: true, //Activate for Homer7 setup
-        apiUser: 'admin',
-        apiPass: 'password',
+       
+        apiUser: 'admin',   // api user
+       
+        apiPass: 'sipcapture',  // api password
+
         timeOut: 1800, // seconds
-        proxyHost: '0.0.0.0',
-        proxyPort: 8765
+
+        //my server host where I will run the View and the Proxy
+        proxyHost: 'http://my.server.host',
+
+        // my server Proxy port
+        proxyPort: 6666
 };
 
 module.exports = config;
