@@ -48,15 +48,16 @@ module.exports = config;
 
 4. start proxy: cd proxy; npm install && npm start ( The proxy will start in the Port you specified, so be sure that you have that port available for the Proxy )
 
-## 2 Install and configure the view
 
-1. Open the folder of the cloned repository
+## 2 Install and configure the view
+1. Clone this repository
 
 2. `cd homer-view`
 
 3. Run `npm install` to install dependencies.
 
 4. Run `npm install -g @angular/cli` to install or update Angular CLI.
+
 
 5. configure your `environment.ts` with the correct `apiUrl`
 
@@ -81,7 +82,7 @@ export const environment = {
         this.authenticationService.currentUser.subscribe(async (user) => {
             if (!user) {
                 /* FOR TEST API  --> Here add your API user and password .logn('user', 'password') */
-                await this.authenticationService.login('admin', 'sipcapture').pipe(first()).toPromise();
+                await this.authenticationService.login('admin', 'siptest').pipe(first()).toPromise();
                 return;
             }
 ...
@@ -102,12 +103,9 @@ export const environment = {
 
 Just clean local storage and refresh the browser.
 
-
 ### URL Parameters
 The Application accepts the following URL parameters defining search settings 
 
-#### Example
-* `http://localhost:4200/?id=16697926&callid=3orfbk@127.0.0.1&from=1574632800000&to=1577224799000`
 
  **Required** 
 * `id`: id string or array
@@ -123,6 +121,9 @@ The Application accepts the following URL parameters defining search settings
   * logs
   * export
 
+
+#### Example
+* `http://localhost:4200/?id=16697926&callid=3orfbk@127.0.0.1&from=1574632800000&to=1577224799000`
 
 
 -------------
