@@ -46,9 +46,7 @@ module.exports = config;
 ...
 ```
 
-4. start proxy: cd proxy; npm install && npm start 
-
-( The proxy will start in the Port you specified, so be sure that you have that port available for the Proxy )
+4. start proxy: cd proxy; npm install && npm start ( The proxy will start in the Port you specified, so be sure that you have that port available for the Proxy )
 
 ## 2 Install and configure the view
 
@@ -88,18 +86,19 @@ export const environment = {
             }
 ...
 ```
-6. `npm run build` to build the Stand-Alone Angular Viewer. Or just jump to next step for running with the default environment.
 
-7. `ng serve --host=my.server.host --port=4200` to serve the app replacing the `4200` with the port and `my.server.host` with the host you will use for the Homer-view. 
+7. `npm run build` to build the Stand-Alone Angular Viewer. Or just jump to next step for running with the default environment.
 
-8. Access the application at `http://my.server.host:4200/`
+8. `ng serve --host=my.server.host --port=4200` to serve the app replacing the `4200` with the port and `my.server.host` with the host you will use for the Homer-view. 
 
-9. Test the Homer-view app with the parameters of a call stored in your server.
+9. Access the application at `http://my.server.host:4200/`
+
+10. Test the Homer-view app with the parameters of a call stored in your server.
 
 #### Example
 * `http://localhost:4200/?id=16697926&callid=3orfbk@127.0.0.1&from=1574632800000&to=1577224799000`
 
-10. If you have errors in the console it should be because now the `?id=` param is needed. And the queries you made before are stored on local storage.
+11. If you have errors in the console it should be because now the `?id=` param is needed. And the queries you made before are stored on local storage.
 
 Just clean local storage and refresh the browser.
 
