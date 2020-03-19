@@ -66,7 +66,7 @@ import { VERSION } from '../VERSION';
 export const environment = {
   production: false,
   environment: VERSION + '(dev)',
-  /* MY API URL */
+  /* MY HOST URL without proxy port*/
   apiUrl: 'http://my.server.host/api/v3'
 };
 
