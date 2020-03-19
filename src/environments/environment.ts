@@ -6,8 +6,8 @@ import { VERSION } from '../VERSION';
 export const environment = {
   production: false,
   environment: VERSION + '(dev)',
-  /* MY HOST URL without proxy port*/
-  apiUrl: 'http://my.server.host/api/v3'
+  /* MY API host without proxy port*/
+  apiUrl: 'http://my.api.url/api/v3'
 };
 /*
  * For easier debugging in development mode, you can import the following file

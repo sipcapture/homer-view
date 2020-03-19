@@ -36,7 +36,7 @@ export class AppComponent implements OnInit {
         this.authenticationService.currentUser.subscribe(async (user) => {
             if (!user) {
                 /* FOR TEST API  --> Here add your API user and password .logn('user', 'password') */
-                await this.authenticationService.login('admin', 'sipcapture').pipe(first()).toPromise();
+                await this.authenticationService.login('admin', 'admin').pipe(first()).toPromise();
                 return;
             }
          this.testdata = await this.getDataTransaction();
