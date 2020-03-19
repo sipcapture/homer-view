@@ -2,17 +2,13 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-// export const environment = {
-//   production: false,
-//   apiUrl: 'http://localhost/api/v3'
-// };
 import { VERSION } from '../VERSION';
 export const environment = {
   production: false,
   environment: VERSION + '(dev)',
-  apiUrl: 'apiUrl: window.location.protocol + '//' + (window.location.host) + '/api/v3'
+  /* MY API host without proxy port*/
+  apiUrl: 'http://my.api.url/api/v3'
 };
-
 /*
  * For easier debugging in development mode, you can import the following file
  * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
