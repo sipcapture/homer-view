@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import * as moment from 'moment';
 import { Functions } from '../../../helpers/functions';
 
 export interface MesagesData {
@@ -24,20 +25,32 @@ export interface MesagesData {
 })
 
 export class TabMessagesComponent implements OnInit {
-    @Input() dataItem: any;
+    _dataItem: any;
+    @Input() set dataItem(val) {
+        this._dataItem = val;
+        this.dataSource = Functions.messageFormatter(this._dataItem.data.messages);
+    }
+    get dataItem () {
+        return this._dataItem;
+    }
     @Output() messageWindow: EventEmitter<any> = new EventEmitter();
 
     isWindow = false;
 
     dataSource: Array<MesagesData> = [];
     displayedColumns: string[] = [
-        'id', 'create_date', 'timeSeconds', 'timeUseconds',
-        'method', 'Msg_Size', 'srcIp_srcPort', 'dstIp_dstPort',
-        'dstIp_dstPort', 'dstPort', 'proto', 'type',
+        'id', 'create_date', 'timeSeconds', 'diff',
+        'method', 'Msg_Size',
+        'srcIp_srcPort', 'dstIp_dstPort',
+        // 'aliasDst', 'aliasSrc',
+        'dstPort', 'proto', 'type',
     ];
 
     constructor() { }
-
+    getAliasByIP (ip) {
+        const alias = this.dataItem.data.alias;
+        return alias[ip] || ip;
+    }
     ngOnInit() {
         this.dataSource = Functions.messageFormatter(this.dataItem.data.messages);
     }
