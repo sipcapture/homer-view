@@ -33,14 +33,14 @@ export class TabExportComponent implements OnInit {
 
         const search = {};
         search[localData.protocol_id] = {
-            id: this.id,
+            id: this.id * 1,
             callid: [this.callid],
             uuid: []
         };
         return {
             timestamp: {
-                from: getParams.from || 1574632800000,
-                to: getParams.to || 1577224799000
+                from: getParams.from * 1 || 1574632800000,
+                to: getParams.to * 1 || 1577224799000
             },
             param: {
                 search,

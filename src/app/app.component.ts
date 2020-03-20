@@ -1,8 +1,9 @@
 import { Component, OnInit  } from '@angular/core';
-import { AuthenticationService, CallTransactionService, SearchCallService} from './services';
+import { CallTransactionService, SearchCallService} from './services';
 import { Functions } from './helpers/functions';
-import { first } from 'rxjs/operators';
+
 import * as moment from 'moment';
+import { CallReportService } from './services/call/report.service';
 
 @Component({
     selector: 'app-root',
@@ -19,69 +20,89 @@ export class AppComponent implements OnInit {
     isMessage = false;
     messageData = null;
     constructor(
-        private _scs: SearchCallService,
-        private authenticationService: AuthenticationService,
-        private callTransactionService: CallTransactionService
+        private searchCallService: SearchCallService,
+        private callTransactionService: CallTransactionService,
+        private callReportService: CallReportService
     ) {
         this.getParams = Functions.getUriParams();
-
+        console.log({getParams: this.getParams});
         this.paramData = {
             id: this.getParams.callid || '',
             mouseEventData: 'item.mouseEventData',
+            dataQOS: [],
             data: this.testdata,
             loaded: false
         };
     }
     ngOnInit() {
-        this.authenticationService.currentUser.subscribe(async (user) => {
-            if (!user) {
-                /* FOR TEST API  - -> Here add your API user and password .logn('user', 'password') */
-                await this.authenticationService.login('admin', 'admin').pipe(first()).toPromise();
+        // this.testdata = await this.getDataTransaction();
+        // const windowData = this.paramData;
+        // this.paramData = {
+        //     id: this.getParams.callid || '',
+        //     mouseEventData: 'item.mouseEventData',
+        //     data: this.testdata,
+        //     loaded: true
+        // };
+
+        console.log('this.getParams', this.getParams);
+
+        this.loading = false;
+        const readyToOpen = (data: any, dataQOS: any) => {
+            if (!data || !dataQOS) {
                 return;
             }
-         this.testdata = await this.getDataTransaction();
-            this.paramData = {
-                id: this.getParams.callid || '',
-                mouseEventData: 'item.mouseEventData',
-                data: this.testdata,
-                loaded: true
+            this.testdata = data;
+
+            this.paramData.loaded = true;
+            this.paramData.data = data;
+            this.paramData.dataQOS = dataQOS;
+            this.paramData.snapShotTimeRange = {
+                from: this.getParams.from,
+                to: this.getParams.to
             };
+        };
+        let localDataQOS: any = null;
+        let localData: any = null;
 
-            console.log('this.getParams', this.getParams);
+        this.callReportService.postQOS(this.getQuery(true)).toPromise().then(dataQOS => {
+            localDataQOS = dataQOS;
+            readyToOpen(localData, localDataQOS);
+        });
 
-            this.loading = true;
-           
+        this.callTransactionService.getTransaction(this.getQuery()).toPromise().then(data => {
+            localData = data;
+            readyToOpen(localData, localDataQOS);
         });
     }
-    async getDataTransaction() {
-        const transactionData = await this.callTransactionService.getTransaction(this.getQuery()).toPromise();
-        console.log({transactionData});
-        return transactionData;
-    }
-    getQuery() {
+    // async getDataTransaction() {
+    //     const transactionData = await this.callTransactionService.getTransaction(this.getQuery()).toPromise();
+    //     console.log({transactionData});
+    //     return transactionData;
+    // }
+    getQuery(isQOS = false) {
         const localData = {
             protocol_id: this.getParams.protocol_id || '1_call'
         };
+        const callid = this.getParams.callid || '';
         let callids = [];
-        if (this.getParams.callid.split(',').length > 0) {
-            callids = this.getParams.callid.split(',');
+        if (callid.split(',').length > 0) {
+            callids = callid.split(',');
         } else {
-            callids = [this.getParams.callid];
+            callids = [callid];
         }
         const search = {};
         search[localData.protocol_id] = {
-            id: this.getParams.id*1,
+            id: this.getParams.id * 1,
             callid: callids,
             uuid: []
         };
-        return {
+        const query: any = {
             param: {
                 transaction: {
                     call: localData.protocol_id === '1_call',
                     registration: localData.protocol_id === '1_registration',
                     rest: localData.protocol_id === '1_default'
                 },
-                limit: this.getParams.limit *1 || 200,
                 search,
                 location: {},
                 timezone: {
@@ -90,11 +111,18 @@ export class AppComponent implements OnInit {
                 }
             },
             timestamp: {
-                from: this.getParams.from *1 || 1574632800000,
-                to: this.getParams.to *1 || 1577224799000
+                from: this.getParams.from * 1 || 1574632800000,
+                to: this.getParams.to * 1 || 1577224799000
             }
         };
+        if (isQOS) {
+            query.param.id = {};
+        } else {
+            query.param.limit = this.getParams.limit || 200;
+        }
+        return query;
     }
+
     addWindowMessage(row, mouseEventData = null) {
         const localData = {
             protocol_id: this.getParams.protocol_id || '1_call'
@@ -103,7 +131,7 @@ export class AppComponent implements OnInit {
         const mData = {
             loaded: false,
             data: null,
-            id: row.data.id,
+            id: row.data.id * 1,
             headerColor: color || '',
             mouseEventData: mouseEventData || row.data.mouseEventData,
             isBrowserWindow: row.isBrowserWindow
@@ -150,13 +178,13 @@ export class AppComponent implements OnInit {
                 }
             },
             timestamp: {
-                from: this.getParams.from *1 || 1574632800000,
-                to: this.getParams.to *1 || 1577224799000
+                from: this.getParams.from * 1 || 1574632800000,
+                to: this.getParams.to * 1 || 1577224799000
             }
         };
 
         request.param.limit = 1;
-        request.param.search[localData.protocol_id] = { id: row.data.id *1};
+        request.param.search[localData.protocol_id] = { id: row.data.id * 1 };
         request.param.transaction = {
             call: localData.protocol_id === '1_call',
             registration: localData.protocol_id === '1_registration',
@@ -166,7 +194,7 @@ export class AppComponent implements OnInit {
         // this.arrMessageDetail.push(mData);
         this.isMessage = mData.loaded;
         this.messageData = mData.data;
-        const getMessageSubscription = this._scs.getMessage(request).subscribe(data => {
+        const getMessageSubscription = this.searchCallService.getMessage(request).subscribe(data => {
             getMessageSubscription.unsubscribe();
 
             mData.data = data.data[0];
