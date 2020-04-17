@@ -1,10 +1,11 @@
 var config = {
+        // replace [apiHost ] with your api host.
         debug: true,
-        apiUrl: 'http://[your-homer-app-domain]/',
-        apiSess: 'http://[your-homer-app-domain]/api/v3/auth',
+        apiUrl: 'http://[apiHost]/api/v3',
+        apiSess: 'http://[apiHost]/api/v3/auth',
         apiAuthJWT: true,
-        apiUser: '[user-name]',
-        apiPass: '[password]',
+        apiUser: 'admin',
+        apiPass: 'admin',
         timeOut: 1800, // seconds
         proxyHost: '0.0.0.0',
         proxyPort: 8765
