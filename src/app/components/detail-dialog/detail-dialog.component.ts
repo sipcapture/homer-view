@@ -136,7 +136,7 @@ export class DetailDialogComponent implements OnInit {
         this._pas.getAll().toPromise().then(advanced => {
             if (advanced && advanced.data) {
                 try {
-                    const params = Functions.getUriJson();
+                    const params = Functions.getUriParams();
                     const category = params && params.param ? 'export' : 'search';
                     const setting = advanced.data.filter(i => i.category === category && i.param === 'transaction');
                     if (setting && setting[0] && setting[0].data) {

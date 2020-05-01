@@ -22,24 +22,24 @@ Stand-Alone Angular Viewer for HOMER API 7.7
 var config = {
 
         // the url of my api
-        apiUrl: 'http://my.api.host/api/v3/',
+        apiUrl: 'http://[Api Host]/api/v3/',
 
         // the url of my api auth
-        apiSess: 'http://my.api.host/api/v3/auth',
+        apiSess: 'http://[Api Host]/api/v3/auth',
         
         apiAuthJWT: true, //Activate for Homer7 setup
        
-        apiUser: 'admin',   // api user
+        apiUser: '[api-user]',   // api user
        
-        apiPass: 'sipcapture',  // api password
+        apiPass: '[api-pass]',  // api password
 
         timeOut: 1800, // seconds
 
         //my server host where I will run the View and the Proxy
-        proxyHost: 'http://my.server.host',
+        proxyHost: '[my Homer-view host]',
 
         // my server Proxy port
-        proxyPort: 6666
+        proxyPort: 8765
 };
 
 module.exports = config;
@@ -50,16 +50,15 @@ module.exports = config;
 
 
 ## 2 Install and configure the view
-1. Clone this repository
 
-2. `cd homer-view`
+1. `cd homer-view`
 
-3. Run `npm install` to install dependencies.
+2. Run `npm install` to install dependencies.
 
-4. Run `npm install -g @angular/cli` to install or update Angular CLI.
+3. Run `npm install -g @angular/cli` to install or update Angular CLI.
 
 
-5. configure your `environment.ts` with the correct `apiUrl`
+4. configure your `environment.ts` with the correct `apiUrl`
 
 ```js
 ...
@@ -67,39 +66,25 @@ import { VERSION } from '../VERSION';
 export const environment = {
   production: false,
   environment: VERSION + '(dev)',
-  /* MY API URL without proxy port*/
-  apiUrl: 'http://my.api.host/api/v3'
+  /* MY URL with proxy port*/
+  apiUrl: 'http://my.host:8765'
 };
 
 ...
 ```
 
-6. open the `src/app/app.component.ts` and configure an save your Api user and password in:
+5. `npm run build` to build the Stand-Alone Angular Viewer. Or just jump to next step for running with the default environment.
 
-```js
-...
-    ngOnInit() {
-        this.authenticationService.currentUser.subscribe(async (user) => {
-            if (!user) {
-                /* FOR TEST API  --> Here add your API user and password .logn('user', 'password') */
-                await this.authenticationService.login('admin', 'siptest').pipe(first()).toPromise();
-                return;
-            }
-...
-```
+6. `ng serve --host=my.server.host --port=4200` to serve the app replacing the `4200` with the port and `my.server.host` with the host you will use for the Homer-view. 
 
-7. `npm run build` to build the Stand-Alone Angular Viewer. Or just jump to next step for running with the default environment.
+7. Access the application at `http://my.server.host:4200/`
 
-8. `ng serve --host=my.server.host --port=4200` to serve the app replacing the `4200` with the port and `my.server.host` with the host you will use for the Homer-view. 
-
-9. Access the application at `http://my.server.host:4200/`
-
-10. Test the Homer-view app with the parameters of a call stored in your server.
+8. Test the Homer-view app with the parameters of a call stored in your server.
 
 #### Example
 * `http://localhost:4200/?id=16697926&callid=3orfbk@127.0.0.1&from=1574632800000&to=1577224799000`
 
-11. If you have errors in the console it should be because now the `?id=` param is needed. And the queries you made before are stored on local storage.
+9. If you have errors in the console it should be because now the `?id=` param is needed. And the queries you made before are stored on local storage.
 
 Just clean local storage and refresh the browser.
 
