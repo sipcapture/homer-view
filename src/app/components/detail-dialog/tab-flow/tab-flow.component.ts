@@ -207,32 +207,23 @@ export class TabFlowComponent implements OnInit, AfterViewInit, OnDestroy {
             // the regexp will fail, and result in null. This is a 'best' effort
             const regex = RegExp('(.*(?!$))(?::)([0-9]+)?$');
             if (regex.exec(i) != null) {
-                const IP    = regex.exec(i)[1].replace(/\[|\]/g, ''); // gives IP
-                const PORT  = regex.exec(i)[2]; // gives port
-                return {
-                    ip: i,
-                    isIPv6: IP.match(/\:/g) && IP.match(/\:/g).length > 1,
-                    shortIPtext1: this.compIPV6(IP),
-                    shortIPtext2: this.shortcutIPv6String(IP),
-                    alias,
-                    IP,
-                    PORT
-                };
+                let IP    = regex.exec(i)[1]; // gives IP
+                if(IP.indexOf(':') > 0 && IP.indexOf(']') === -1 ) {
+                    // got an IPv6, not already wrapped in brackets '[ipv6]'
+                    // pre+suffix [ IPv6 ] to make addr:port delineation clearer
+                    IP = '[' + IP + ']';
+                }
+                let PORT  = regex.exec(i)[2]; // gives port
+                PORT = PORT ? ':' + PORT : '';
+                return { ip: i, alias, IP, PORT };
             } else {
                 // fall back to the old method if things don't work out.
                 const al    = i.split(':');
-                const IP    = al[0].replace(/\[|\]/g, '');
+                const IP    = al[0];
                 const PORT  = al[1] ? ':' + al[1] : '';
-                return {
-                    ip: i,
-                    shortIPtext1: this.compIPV6(IP),
-                    shortIPtext2: this.shortcutIPv6String(IP),
-                    isIPv6: IP.match(/\:/g) && IP.match(/\:/g).length > 1,
-                    alias,
-                    IP,
-                    PORT
-                };
+                return { ip: i, alias, IP, PORT };
             }
+
         });
 
         const colCount = this.aliasTitle.length;
@@ -249,7 +240,7 @@ export class TabFlowComponent implements OnInit, AfterViewInit, OnDestroy {
                 callid: i
             };
         });
-        
+
         this.flowGridLines = Array.from({length: Object.keys(hosts).length - 1});
         const sortedArray = [].concat(
             ...(this._RTPFilterForFLOW ? this.arrayItemsRTP_AGENT : []),
