@@ -57,52 +57,78 @@ export class Functions {
             return 'HEP-'+payload;
         }
     }
-
-    static colorByMethod(method: string, payload: number) {
-
-        if (method) {
-            if (method === 'INVITE') {
-                return '#00cc00';
-            } else if (method === 'BYE') {
-                return '#6600cc';
-            } else if (method === 'CANCEL') {
-                return 'red';
-            } else if (method === '180' || method === '183') {
-                return '#0099cc';
-            } else if (method === '200') {
-                return '#0000cc';
-            } else if (method === '401' || method === '407' || method === '404') {
-                return '#cc0033';
-            } else if (method === '486') {
-                return '#cc6600';
-            } else {
-                return 'black';
+    static colorByMethod (method, payload: number){
+        let color:string = 'hsl(0,0%,0%)';
+        if(method){
+            if(method === 'INVITE'){
+                color = 'hsl(227.5,82.4%,51%)'
+            }else if(method === "BYE" || method === "CANCEL"){
+                color = 'hsl(120,100%,25%)'
+            }else if(method >= 100 && method < 200){
+                color = 'hsl(0,0%,0%)'
+            }else if(method >= 200 && method < 300){
+                color = 'hsl(120,70%,50%)'
+            }else if(method >= 300 && method < 400){
+                color = 'hsl(280,100%,50%)'
+            }else if(method >= 400 && method < 500){
+                color = 'hsl(15,100%,45%)'
+            }else if(method >= 500 && method < 700){
+                color = 'hsl(0,100%,45%)'
+            }else {
+                color = 'hsl(0,0%,0%)'
             }
-        } else {
+
+        }else {
             if (payload === 5) {
-                return 'blue';
+                color =  'blue';
             } else if (payload === 8) {
-                return 'blue';
+                color =  'blue';
             } else if (payload === 38) {
-                return 'blue';
+                color =  'blue';
             } else if (payload === 39) {
-                return 'green';
+                color =  'green';
             } else if (payload === 34) {
-                return 'green';
+                color =  'green';
             } else if (payload === 35) {
-                return 'blue';
+                color =  'blue';
             } else if (payload === 100) {
-                return 'red';
+                color =  'red';
             } else {
-                return 'red';
+                color =  'red';
             }
         }
+        return color;
     }
 
-    static getColorByString(str: string) {
+    static getColorByString(str: string, saturation?:number, lightness?:number, alpha?:number, offset?: number) {
         const col = Functions.getColorByStringHEX(str);
-        const num = parseInt(col, 16) % 360;
-        return `hsl(${num}, 100%, 25%)`;
+        /* const num = parseInt(col, 16) % 360; */
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(col);
+
+        let r = parseInt(result[1], 16);
+        let g = parseInt(result[2], 16);
+        let b = parseInt(result[3], 16);
+        r /= 255, g /= 255, b /= 255;
+        const max = Math.max(r, g, b), min = Math.min(r, g, b);
+        let h, s, l = (max + min) / 2;
+        if (max === min) {
+            h = s = 0; // achromatic
+        } else {
+            const d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            switch(max) {
+                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                case g: h = (b - r) / d + 2; break;
+                case b: h = (r - g) / d + 4; break;
+            }
+            h /= 6;
+        }
+        h = Math.round(h * 360);
+        saturation = saturation || Math.round(s * 100);
+        lightness = lightness || Math.round(l * 100);
+        alpha = alpha || 1;
+        offset = offset || 0;
+        return `hsl(${h - offset}, ${saturation}%, ${lightness}%,${alpha})`;
     }
     static getColorByStringHEX(str: string) {
         if (str === 'LOG') {
@@ -124,6 +150,27 @@ export class Functions {
             col = col.substring(0, 6);
         }
         return col;
+    }
+    static getMethodColor (str){
+        let color:string = 'hsl(0,0%,0%)'
+        if(str === 'INVITE'){
+            color = 'hsl(227.5,82.4%,51%)'
+        }else if(str === "BYE" || str === "CANCEL"){
+            color = 'hsl(120,100%,25%)'
+        }else if(str >= 100 && str < 200){
+            color = 'hsl(0,0%,0%)'
+        }else if(str >= 200 && str < 300){
+            color = 'hsl(120,70%,50%)'
+        }else if(str >= 300 && str < 400){
+            color = 'hsl(280,100%,50%)'
+        }else if(str >= 400 && str < 500){
+            color = 'hsl(15,100%,45%)'
+        }else if(str >= 500 && str < 700){
+            color = 'hsl(0,100%,45%)'
+        }else {
+            color = 'hsl(0,0%,0%)'
+        }
+        return color
     }
     static messageFormatter(dist: Array<any>) {
         const dataSource: Array<any> = [];
