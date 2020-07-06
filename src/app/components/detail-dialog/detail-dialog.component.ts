@@ -1,11 +1,23 @@
-import { Component, Input, Output, EventEmitter, OnInit, HostListener, ElementRef, ViewChild } from '@angular/core';
+import {
+    Component,
+    Input,
+    Output,
+    EventEmitter,
+    OnInit,
+    HostListener,
+    ElementRef,
+    ViewChild,
+    ChangeDetectionStrategy
+} from '@angular/core';
 import { Functions } from '@app/helpers/functions';
 import { PreferenceAdvancedService } from '@app/services';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
     selector: 'app-detail-dialog',
     templateUrl: './detail-dialog.component.html',
-    styleUrls: ['./detail-dialog.component.css']
+    styleUrls: ['./detail-dialog.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DetailDialogComponent implements OnInit {
     @Input() titleId: string;
@@ -15,11 +27,19 @@ export class DetailDialogComponent implements OnInit {
     @Input() mouseEventData: any;
     @Input() snapShotTimeRange: any;
     isSimplify = true;
-    isSimplifyPort = true;
+    isSimplifyPort = false;
+    isCombineByAlias = true;
     IdFromCallID;
+    RTPFilterForFLOW = true;
     activeTab = 0;
     isFilterOpened = false;
     isFilterOpenedOutside = false;
+    combineType = '1none';
+    listCombineTypes = {
+        '1none': 'Ungrouped',
+        '2alias': 'Group by Alias',
+        '3port': 'Group Ports'
+    };
     tabs = {
         messages: false,
         flow: false,
@@ -27,6 +47,7 @@ export class DetailDialogComponent implements OnInit {
         logs: true,
         export: false
     };
+    public flowFilters: any;
     exportAsPNG = false;
     isBrowserWindow = false;
     _isLoaded = false;
@@ -88,7 +109,8 @@ export class DetailDialogComponent implements OnInit {
     dataLogs: Array<any>;
 
     constructor(
-        private _pas: PreferenceAdvancedService
+        private _pas: PreferenceAdvancedService,
+        private changeDetectorRefs: ChangeDetectorRef
     ) { }
 
     ngOnInit () {
@@ -155,7 +177,17 @@ export class DetailDialogComponent implements OnInit {
         this.exportAsPNG = true;
         setTimeout(() => { this.exportAsPNG = false; });
     }
-    doFilterMessages() {
+    /* doFilterMessages() {
+        if (this.combineType === '1none') { 
+            this.isCombineByAlias = false; 
+            this.isSimplifyPort   = false;
+        } else if (this.combineType === '2alias') { 
+            this.isCombineByAlias = true; 
+            this.isSimplifyPort   = true;
+        } else if (this.combineType === '3port') { 
+            this.isCombineByAlias = false; 
+            this.isSimplifyPort   = true;
+        }
         setTimeout(() => {
             const fc = Functions.cloneObject;
             this.sipDataItem.data.messages = fc(this._messagesBuffer).messages.filter(i => {
@@ -176,11 +208,56 @@ export class DetailDialogComponent implements OnInit {
             this.sipDataItem.data.calldata = fc(this._messagesBuffer).calldata.filter(i => selectedId.includes(i.id));
             this.sipDataItem = Functions.cloneObject(this.sipDataItem); // refresh data
         }, 100);
-    }
+    } */
+    doFilterMessages() {
+        if (this.combineType === '1none') {
+            this.isCombineByAlias = false;
+            this.isSimplifyPort   = false;
+        } else if (this.combineType === '2alias') {
+            this.isCombineByAlias = true;
+            this.isSimplifyPort   = true;
+        } else if (this.combineType === '3port') {
+            this.isCombineByAlias = false;
+            this.isSimplifyPort   = true;
+        }
+        setTimeout(() => {
+            const fc = Functions.cloneObject;
+            this.sipDataItem.data.messages = fc(this._messagesBuffer).messages.filter(i => {
+                const boolPayloadType =
+                    this.checkboxListFilterPayloadType.filter(j => j.payloadType * 1 === i.payloadType * 1 && j.selected).length > 0;
 
+                const boolPort =
+                    this.checkboxListFilterPort.filter(j => i.srcPort * 1 === j.port * 1 && j.selected).length > 0 &&
+                    this.checkboxListFilterPort.filter(j => i.dstPort * 1 === j.port * 1 && j.selected).length > 0;
+
+                const boolCallId =
+                    this.checkboxListFilterCallId.filter(j => j.sid === i.sid && j.selected).length > 0;
+
+                return boolPayloadType && boolPort && boolCallId;
+            });
+
+            const RTPFilter = this.checkboxListFilterPayloadType.find(i => i.title === 'RTP');
+            this.RTPFilterForFLOW = RTPFilter ? RTPFilter.selected : true;
+
+            const selectedId = this.sipDataItem.data.messages.map(i => i.id);
+
+            this.sipDataItem.data.calldata = fc(this._messagesBuffer).calldata.filter(i => selectedId.includes(i.id));
+            this.sipDataItem = Functions.cloneObject(this.sipDataItem); // refresh data
+            this.flowFilters = {
+                isSimplify: this.isSimplify,
+                isSimplifyPort: this.isSimplifyPort,
+                isCombineByAlias: this.isCombineByAlias,
+                PayloadType: this.checkboxListFilterPayloadType,
+                CallId: this.checkboxListFilterCallId
+            };
+            this.changeDetectorRefs.detectChanges();
+        }, 100);
+    }
     doOpenFilter() {
         setTimeout(() => {
-            this.isFilterOpened = true;
+            this.isFilterOpened = true;      
+            this.changeDetectorRefs.detectChanges();
+
         }, 10);
     }
 
