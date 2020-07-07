@@ -1,6 +1,7 @@
 
 .message-container {
     height: 100%;
+    padding-bottom: 45px;
 }
 .message-container .ngx-json-viewer {
     height: initial !important;
