@@ -44,7 +44,6 @@ export class AppComponent implements OnInit {
         //     loaded: true
         // };
 
-        console.log('this.getParams', this.getParams);
 
         this.loading = false;
         const readyToOpen = (data: any, dataQOS: any) => {
@@ -125,7 +124,7 @@ export class AppComponent implements OnInit {
 
     addWindowMessage(row, mouseEventData = null) {
         const localData = {
-            protocol_id: this.getParams.protocol_id || '1_call'
+            protocol_id: row.data.profile || '1_call'
         };
         const color = Functions.getColorByString(row.data.method || 'LOG');
         const mData = {
@@ -136,7 +135,6 @@ export class AppComponent implements OnInit {
             mouseEventData: mouseEventData || row.data.mouseEventData,
             isBrowserWindow: row.isBrowserWindow
         };
-        console.log('', row)
         if (row.isLog) {
             const data = row.data.item;
             mData.data = data;
@@ -162,7 +160,6 @@ export class AppComponent implements OnInit {
             this.messageData = mData.data;
             // this.arrMessageDetail.push(mData);
 
-            console.log('', mData, row)
             return;
         }
 
@@ -186,17 +183,15 @@ export class AppComponent implements OnInit {
         request.param.limit = 1;
         request.param.search[localData.protocol_id] = { id: row.data.id * 1 };
         request.param.transaction = {
-            call: localData.protocol_id === '1_call',
-            registration: localData.protocol_id === '1_registration',
-            rest: localData.protocol_id === '1_default'
+            call: localData.protocol_id.match('call'),
+            registration: localData.protocol_id.match('registration'),
+            rest: localData.protocol_id.match('default')
         };
-
         // this.arrMessageDetail.push(mData);
         this.isMessage = mData.loaded;
         this.messageData = mData.data;
         const getMessageSubscription = this.searchCallService.getMessage(request).subscribe(data => {
             getMessageSubscription.unsubscribe();
-
             mData.data = data.data[0];
             mData.data.item = {
                 raw: mData.data.raw
@@ -220,4 +215,5 @@ export class AppComponent implements OnInit {
             this.messageData = mData.data;
         });
     }
+
 }
