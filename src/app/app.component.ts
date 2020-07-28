@@ -1,14 +1,16 @@
-import { Component, OnInit  } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy  } from '@angular/core';
 import { CallTransactionService, SearchCallService} from './services';
 import { Functions } from './helpers/functions';
 
 import * as moment from 'moment';
 import { CallReportService } from './services/call/report.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.css']
+    styleUrls: ['./app.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
     title = 'homer-view';
@@ -22,7 +24,8 @@ export class AppComponent implements OnInit {
     constructor(
         private searchCallService: SearchCallService,
         private callTransactionService: CallTransactionService,
-        private callReportService: CallReportService
+        private callReportService: CallReportService,
+        private cdr: ChangeDetectorRef
     ) {
         this.getParams = Functions.getUriParams();
         console.log({getParams: this.getParams});
@@ -59,6 +62,7 @@ export class AppComponent implements OnInit {
                 from: this.getParams.from,
                 to: this.getParams.to
             };
+            this.cdr.detectChanges();
         };
         let localDataQOS: any = null;
         let localData: any = null;
@@ -73,11 +77,7 @@ export class AppComponent implements OnInit {
             readyToOpen(localData, localDataQOS);
         });
     }
-    // async getDataTransaction() {
-    //     const transactionData = await this.callTransactionService.getTransaction(this.getQuery()).toPromise();
-    //     console.log({transactionData});
-    //     return transactionData;
-    // }
+
     getQuery(isQOS = false) {
         const localData = {
             protocol_id: this.getParams.protocol_id || '1_call'
@@ -126,6 +126,9 @@ export class AppComponent implements OnInit {
         const localData = {
             protocol_id: row.data.profile || '1_call'
         };
+        if (row.data.profile === '' && row.data.proto === 'rtcp' && row.data.payloadType === 5) {
+            localData.protocol_id = '5_default';
+        }
         const color = Functions.getColorByString(row.data.method || 'LOG');
         const mData = {
             loaded: false,
@@ -154,15 +157,14 @@ export class AppComponent implements OnInit {
                     return {name: i, value: val};
                 })
                 .filter(i => typeof i.value !== 'object' && i.name !== 'raw');
-            // this.changeDetectorRefs.detectChanges();
             mData.loaded = true;
             this.isMessage = mData.loaded;
             this.messageData = mData.data;
             // this.arrMessageDetail.push(mData);
+            this.cdr.detectChanges();
 
             return;
         }
-
         const request = {
             param: {
                 transaction: {},
@@ -209,10 +211,10 @@ export class AppComponent implements OnInit {
                     return {name: i, value: val};
                 })
                 .filter(i => typeof i.value !== 'object' && i.name !== 'raw');
-            // this.changeDetectorRefs.detectChanges();
             mData.loaded = true;
             this.isMessage = mData.loaded;
             this.messageData = mData.data;
+            this.cdr.detectChanges();
         });
     }
 
