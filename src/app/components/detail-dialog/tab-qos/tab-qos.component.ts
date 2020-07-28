@@ -382,8 +382,7 @@ export class TabQosComponent implements OnInit {
                 this.onErrorMessage(err);
                 return;
             }
-
-            if ( (1 * item.raw.type !== 200 && 1 * item.raw.type !== 202) || !item.raw.sender_information ) {
+            if ( (1 * item.raw.type !== 200 && 1 * item.raw.type !== 202 && 1 * item.raw.type !== 201)) {
                 return;
             }
 
@@ -419,11 +418,17 @@ export class TabQosComponent implements OnInit {
                     k.create_date.unshift( item.create_date );
 
                     // packets
-                    k.packetsData.push(i.sender_information.packets);
-
+                    if (typeof i.sender_information === 'undefined') {
+                        k.packetsData.push(0)
+                    } else {
+                        k.packetsData.push(i.sender_information.packets);
+                    }
                     // octets
-                    k.octetsData.push(i.sender_information.octets);
-
+                    if (typeof i.sender_information === 'undefined') {
+                        k.octetsData.push(0)
+                    } else {
+                        k.octetsData.push(i.sender_information.octets);
+                    }
                     if (i.report_blocks && i.report_blocks[0]) {
                         const block = i.report_blocks[0];
                         const tmpMos = Math.round(this.calculateJitterMos({
@@ -451,14 +456,20 @@ export class TabQosComponent implements OnInit {
                         k.mosData.push(tmpMos * 1);
                         /* end chart */
 
-                        if (!isNaN(i.sender_information.packets)) {
+                        if (typeof i.sender_information === 'undefined') {
+                            this.list[0].value = 0;
+                            this.list[2].value = 0;
+                        } else if (!isNaN(i.sender_information.packets)) {
                             // min packets
                             this.list[0].value = Math.min(this.list[0].value, i.sender_information.packets * 1);
                             // max packets
                             this.list[2].value = Math.max(this.list[2].value, i.sender_information.packets * 1);
                         }
 
-                        if (!isNaN(i.sender_information.octets)) {
+                        if (typeof i.sender_information === 'undefined') {
+                            this.list[3].value = 0;
+                            this.list[5].value = 0;
+                        } else if (!isNaN(i.sender_information.octets)) {
                             // min octets
                             this.list[3].value = Math.min(this.list[3].value, i.sender_information.octets * 1);
                             // max octets
@@ -543,8 +554,8 @@ export class TabQosComponent implements OnInit {
         // avg mos
         this.list[16].value = this.average(this.streams, 'mosData');
 
-         // avg packets_lost
-         this.list[19].value = this.average(this.streams, 'packets_lostData');
+        // avg packets_lost
+        this.list[19].value = this.average(this.streams, 'packets_lostData');
 
         this.renderChartData(this.streams, this.chartData);
         this.isRTCP = true;
@@ -621,7 +632,7 @@ export class TabQosComponent implements OnInit {
                 !(!item.packets && !item.octets && !item.highest_seq_no && !item.ia_jitter && !item.lsr && !item.mos && !item.packets_lost);
         }
         const checkArray = [];
-            this.streams.forEach(stream => checkArray.push(stream[type]));
+        this.streams.forEach(stream => checkArray.push(stream[type]));
 
         let index: number;
         if (typeof this.rtcpChart !== 'undefined') {
