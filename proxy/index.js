@@ -141,7 +141,7 @@ var proxy = httpProxy.createProxyServer({});
 proxy.on('proxyReq', function(proxyReq, req, res, options) {
     proxyReq.setHeader("Access-Control-Allow-Origin", "*"); // allow requests from any other server
     proxyReq.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-    proxyReq.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Cache-Control");
+    proxyReq.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Cache-Control, Authorization");
 
     if (req.headers && req.headers.cookie && !_config_.apiAuthJWT) {
         getAuthCookie(req.headers.cookie);
@@ -155,7 +155,7 @@ var server = http.createServer(function(req, res) {
 
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Cache-Control");
+    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Cache-Control, Authorization");
 
     if (req.method === 'OPTIONS') {
         console.log('OPTIONS')
