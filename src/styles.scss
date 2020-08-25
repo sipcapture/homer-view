@@ -285,3 +285,10 @@ h3 {
 .copysnack .mat-simple-snackbar-action {
   color: #1cdda0 !important;
 }
+.segment-value{
+  display: inline-block !important;
+  max-width: 85% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  vertical-align: bottom !important;
+}

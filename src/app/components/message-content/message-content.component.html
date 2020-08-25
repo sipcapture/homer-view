@@ -9,11 +9,13 @@
 
 <mat-tab-group class="message-container">
   <mat-tab label="Message" style="padding: 1rem;">
+    <div style="height: 100%; overflow-y: auto; padding: 1rem;">
       <ngx-json-viewer *ngIf="raw_isJSON" [json]="raw" [expanded]="true"></ngx-json-viewer>
       
       <pre *ngIf="!raw_isJSON" style="font-family: monospace;font-size: 10pt;padding: 0.5rem 2rem; height: 100%; box-sizing: border-box;margin: 0;">{{
           raw
       }}</pre>
+    </div>
   </mat-tab>
   
   <mat-tab label="Details" style="padding: 1rem;">

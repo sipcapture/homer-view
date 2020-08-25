@@ -110,7 +110,7 @@ export class DetailDialogComponent implements OnInit {
 
     constructor(
         private _pas: PreferenceAdvancedService,
-        private changeDetectorRefs: ChangeDetectorRef
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit () {
@@ -157,6 +157,7 @@ export class DetailDialogComponent implements OnInit {
     setTabByAdvanced() {
         this._pas.getAll().toPromise().then(advanced => {
             if (advanced && advanced.data) {
+
                 try {
                     const params = Functions.getUriParams();
                     const category = params && params.param ? 'export' : 'search';
@@ -164,6 +165,7 @@ export class DetailDialogComponent implements OnInit {
                     if (setting && setting[0] && setting[0].data) {
                         const { tabpositon } = setting[0].data;
                         if (tabpositon && typeof tabpositon === 'string' && tabpositon !== '') {
+
                             this.tabIndexByDefault = Object.keys(this.tabs).indexOf(tabpositon);
                             this.activeTab = this.tabIndexByDefault;
                         }
@@ -250,13 +252,13 @@ export class DetailDialogComponent implements OnInit {
                 PayloadType: this.checkboxListFilterPayloadType,
                 CallId: this.checkboxListFilterCallId
             };
-            this.changeDetectorRefs.detectChanges();
+            this.cdr.detectChanges();
         }, 100);
     }
     doOpenFilter() {
         setTimeout(() => {
             this.isFilterOpened = true;      
-            this.changeDetectorRefs.detectChanges();
+            this.cdr.detectChanges();
 
         }, 10);
     }
