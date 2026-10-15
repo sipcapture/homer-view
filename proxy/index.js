@@ -27,7 +27,42 @@ function _log (/** arguments */) {
     if (debug) console.log.apply(this, arguments);
 }
 
-_log(_config_)
+function configForLog(config) {
+    return {
+        apiUrl: config.apiUrl,
+        apiSess: config.apiSess,
+        apiUser: config.apiUser,
+        apiPass: config.apiPass ? '***' : undefined,
+        proxyPort: config.proxyPort,
+        timeOut: config.timeOut,
+        debug: config.debug,
+        apiAuthJWT: config.apiAuthJWT
+    };
+}
+
+function authForLog(auth) {
+    if (typeof auth === 'string') {
+        try {
+            var parsed = JSON.parse(auth);
+            if (parsed.password) {
+                parsed.password = '***';
+            }
+            return JSON.stringify(parsed);
+        } catch (e) {
+            return '[auth]';
+        }
+    }
+    if (auth && typeof auth === 'object') {
+        return {
+            username: auth.username,
+            password: auth.password ? '***' : undefined,
+            auth_type: auth.auth_type
+        };
+    }
+    return '[auth]';
+}
+
+_log(configForLog(_config_));
 
 var apiUrl = _config_.apiUrl;
 var apiSess = _config_.apiSess;
@@ -50,7 +85,7 @@ var getAuthCookie = function(setCookie) {
         "password": apiPass,
         "auth_type": "local"
     });
-    _log(auth);
+    _log(authForLog(auth));
     if (setCookie) jar.setCookie(setCookie, apiSess, function(error, cookie) {});
     request({
         uri: apiSess,
@@ -89,7 +124,7 @@ var getAuthJWT = function() {
         "password": apiPass
     };
 
-    _log(auth);
+    _log(authForLog(auth));
     var headers = {
         "Authorization": 'Bearer ' + homerToken,
         "Content-Type": "application/json;charset=UTF-8"
@@ -115,7 +150,7 @@ var getAuthJWT = function() {
                     process.exit(1);
                 }
                 authCache = true;
-                _log('new token: ', token);
+                _log('new token received');
                 homerToken = token;
                 
                 return;
