@@ -105,10 +105,18 @@ The Application accepts the following URL parameters defining search settings
   * flow
   * logs
   * export
+* `capture_id`: comma-separated capture IDs; filters messages by `captureId` (and related fields)
+* `capture_agent_id`: comma-separated values matched against `capturePass` / agent id on each message
+* `node`: comma-separated Homer DB node names (same as `location.node` in the API)
+* `ips`: comma-separated IP allowlist — show only messages where `srcIp` or `dstIp` is listed (#21)
+* `exclude_ips`: comma-separated IPs passed to the API `whitelist` field (those IPs are excluded server-side)
+* `limit`: max messages (default 200)
+* `protocol_id`: search profile key (default `1_call`)
 
 
 #### Example
 * `http://localhost:4200/?id=16697926&callid=3orfbk@127.0.0.1&from=1574632800000&to=1577224799000`
+* `http://localhost:4200/?id=16697926&callid=3orfbk@127.0.0.1&from=1574632800000&to=1577224799000&capture_id=2001&capture_agent_id=myagent&ips=10.0.0.1,10.0.0.2`
 
 
 -------------

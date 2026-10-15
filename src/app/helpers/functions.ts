@@ -210,9 +210,94 @@ export class Functions {
         return src;
     }
     static getUriParams(): any {
-        return window.location.search ? window.location.search.split('&')
+        if (!window.location.search) {
+            return { noParams: true, from: 0, to: 0 };
+        }
+        return window.location.search.split('&')
             .map(i => i.replace('?', '').split('='))
-                .reduce((a, b) => (a[b[0]] = b[1], a), {}) : {noParams: true, from: 0, to: 0};
+            .reduce((a, b) => {
+                try {
+                    a[b[0]] = decodeURIComponent(b[1] || '');
+                } catch (err) {
+                    a[b[0]] = b[1] || '';
+                }
+                return a;
+            }, {});
+    }
+
+    /** Comma-separated URL param → trimmed string list. */
+    static parseUriParamList(value: string | undefined | null): string[] {
+        if (value === undefined || value === null || value === '') {
+            return [];
+        }
+        return value.split(',').map(s => s.trim()).filter(s => s.length > 0);
+    }
+
+    /**
+     * Homer API `param.whitelist` excludes listed IPs from transaction search.
+     * `ips` URL param is the opposite: keep only messages touching those IPs (client-side).
+     */
+    static applyUriParamSearchOptions(query: any, params: any): void {
+        if (!query?.param) {
+            return;
+        }
+        const nodeList = Functions.parseUriParamList(params.node);
+        if (nodeList.length > 0) {
+            query.param.location = { node: nodeList };
+        }
+        const excludeIps = Functions.parseUriParamList(params.exclude_ips);
+        if (excludeIps.length > 0) {
+            query.param.whitelist = excludeIps;
+        }
+    }
+
+    static messageMatchesUriFilters(item: any, params: any): boolean {
+        const captureIds = Functions.parseUriParamList(params.capture_id);
+        const captureAgents = Functions.parseUriParamList(params.capture_agent_id);
+        const allowIps = Functions.parseUriParamList(params.ips);
+
+        if (captureIds.length > 0) {
+            const cid = String(item.captureId ?? item.capture_id ?? '');
+            if (!captureIds.includes(cid)) {
+                return false;
+            }
+        }
+        if (captureAgents.length > 0) {
+            const agent = String(item.capturePass ?? item.capture_agent_id ?? '');
+            if (!captureAgents.includes(agent)) {
+                return false;
+            }
+        }
+        if (allowIps.length > 0) {
+            const src = item.srcIp || '';
+            const dst = item.dstIp || '';
+            if (!allowIps.includes(src) && !allowIps.includes(dst)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static filterTransactionByUriParams(transaction: any, params: any): any {
+        const needsFilter =
+            Functions.parseUriParamList(params.capture_id).length > 0 ||
+            Functions.parseUriParamList(params.capture_agent_id).length > 0 ||
+            Functions.parseUriParamList(params.ips).length > 0;
+        if (!needsFilter || !transaction?.data?.messages) {
+            return transaction;
+        }
+        const result = Functions.cloneObject(transaction);
+        result.data.messages = result.data.messages.filter((item: any) =>
+            Functions.messageMatchesUriFilters(item, params)
+        );
+        const selectedIds = new Set(result.data.messages.map((m: any) => m.id));
+        if (Array.isArray(result.data.calldata)) {
+            result.data.calldata = result.data.calldata.filter((c: any) => selectedIds.has(c.id));
+        }
+        if (typeof result.total === 'number') {
+            result.total = result.data.messages.length;
+        }
+        return result;
     }
     // static getUriParams() {
     //     return window.location.search ? window.location.search.split('&')

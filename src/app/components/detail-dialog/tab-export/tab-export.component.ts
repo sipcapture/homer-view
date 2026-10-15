@@ -37,7 +37,7 @@ export class TabExportComponent implements OnInit {
             callid: [this.callid],
             uuid: []
         };
-        return {
+        const query: any = {
             timestamp: {
                 from: getParams.from * 1 || 1574632800000,
                 to: getParams.to * 1 || 1577224799000
@@ -57,6 +57,8 @@ export class TabExportComponent implements OnInit {
                 }
             }
         };
+        Functions.applyUriParamSearchOptions(query, getParams);
+        return query;
     }
     exportPCAP() {
         const request = this.queryBuilder();
