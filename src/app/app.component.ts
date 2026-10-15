@@ -73,7 +73,7 @@ export class AppComponent implements OnInit {
         });
 
         this.callTransactionService.getTransaction(this.getQuery()).toPromise().then(data => {
-            localData = data;
+            localData = Functions.filterTransactionByUriParams(data, this.getParams);
             readyToOpen(localData, localDataQOS);
         });
     }
@@ -119,6 +119,7 @@ export class AppComponent implements OnInit {
         } else {
             query.param.limit = this.getParams.limit || 200;
         }
+        Functions.applyUriParamSearchOptions(query, this.getParams);
         return query;
     }
 
