@@ -23,10 +23,6 @@ if (process.argv.indexOf("-c") != -1) {
 
 var debug = _config_.debug || false;
 
-function _log (/** arguments */) {
-    if (debug) console.log.apply(this, arguments);
-}
-
 function configForLog(config) {
     return {
         apiUrl: config.apiUrl,
@@ -62,6 +58,43 @@ function authForLog(auth) {
     return '[auth]';
 }
 
+function redactForLog(value) {
+    if (value === null || value === undefined) {
+        return value;
+    }
+    if (typeof value === 'string') {
+        try {
+            JSON.parse(value);
+            return authForLog(value);
+        } catch (e) {
+            return value;
+        }
+    }
+    if (typeof value === 'object') {
+        if (value.apiUrl !== undefined || value.apiPass !== undefined) {
+            return configForLog(value);
+        }
+        if (value.username !== undefined || value.password !== undefined) {
+            return authForLog(value);
+        }
+        if (value.token !== undefined) {
+            return { token: '***' };
+        }
+    }
+    return value;
+}
+
+function _log() {
+    if (!debug) {
+        return;
+    }
+    var sanitized = [];
+    for (var i = 0; i < arguments.length; i++) {
+        sanitized.push(redactForLog(arguments[i]));
+    }
+    console.log.apply(console, sanitized);
+}
+
 _log(configForLog(_config_));
 
 var apiUrl = _config_.apiUrl;
@@ -85,7 +118,7 @@ var getAuthCookie = function(setCookie) {
         "password": apiPass,
         "auth_type": "local"
     });
-    _log(authForLog(auth));
+    _log('auth POST for user', apiUser);
     if (setCookie) jar.setCookie(setCookie, apiSess, function(error, cookie) {});
     request({
         uri: apiSess,
@@ -98,7 +131,7 @@ var getAuthCookie = function(setCookie) {
             _log('Exiting...', error);
             process.exit(1);
         } else {
-            _log(body);
+            _log('auth response received');
             if (response.statusCode == 200) {
                 var status = JSON.parse(body).auth;
                 if (!status || status != true) {
@@ -124,7 +157,7 @@ var getAuthJWT = function() {
         "password": apiPass
     };
 
-    _log(authForLog(auth));
+    _log('JWT auth POST for user', apiUser);
     var headers = {
         "Authorization": 'Bearer ' + homerToken,
         "Content-Type": "application/json;charset=UTF-8"
@@ -142,7 +175,7 @@ var getAuthJWT = function() {
             _log('Exiting...', error);
             process.exit(1);
         } else {
-            _log(response.statusCode, body);
+            _log('JWT auth response status', response.statusCode);
             if (response.statusCode == 200 || response.statusCode == 201) {
                 var token = body.token;
                 if (!token) {
